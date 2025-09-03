@@ -17,7 +17,7 @@ public interface LoanApplicationRepository {
 
     Flux<LoanApplication> findAll();
 
-    Flux<LoanApplication> findAllByUser();
+    Flux<LoanApplication> findAllByUser(String userId);
 
     Flux<LoanApplication> findAllByStatus(ApplicationStatus status);
 }
