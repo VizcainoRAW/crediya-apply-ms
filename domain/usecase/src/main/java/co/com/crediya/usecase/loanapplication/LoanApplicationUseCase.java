@@ -6,6 +6,7 @@ import co.com.crediya.model.loanapplication.gateways.LoanApplicationRepository;
 import co.com.crediya.model.loanapplication.gateways.LoanTypeRepository;
 import co.com.crediya.model.loanapplication.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -27,6 +28,14 @@ public class LoanApplicationUseCase {
                 .then(validateLoanTerm(loanApplication.getTermMonths()))
                 .then(createLoanApplication(loanApplication))
                 .flatMap(loanApplicationRepository::save);
+    }
+
+    public Mono<LoanApplication> findById(UUID id) {
+        return loanApplicationRepository.findById(id);
+    }
+
+    public Flux<LoanApplication> findAll() {
+        return loanApplicationRepository.findAll();
     }
 
     private Mono<Void> validateUser(String userId) {
