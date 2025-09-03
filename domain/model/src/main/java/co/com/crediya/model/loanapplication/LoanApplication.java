@@ -18,8 +18,9 @@ import lombok.Setter;
 public class LoanApplication {
     private UUID id;
     private String userId;
+    private UUID loanTypeId;
     private BigDecimal amount;
-    private Integer termMoths;
+    private Integer termMonths;
     private ApplicationStatus status;
     private LocalDateTime createdAt;
 }
