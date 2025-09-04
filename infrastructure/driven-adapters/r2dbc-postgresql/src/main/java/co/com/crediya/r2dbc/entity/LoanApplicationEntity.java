@@ -11,6 +11,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,7 +24,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Table("loan_applications")
-public class LoanApplicationEntity {
+public class LoanApplicationEntity implements Persistable<UUID> {
     
     @Id
     private UUID id;
@@ -41,4 +44,17 @@ public class LoanApplicationEntity {
     
     @Column("created_at")
     private LocalDateTime createdAt;
+
+    @Transient
+    private boolean isNew;
+
+    @Override
+    public boolean isNew() {
+        return this.isNew || createdAt == null;
+    }
+
+    public LoanApplicationEntity setAsNew() {
+        this.isNew = true;
+        return this;
+    }
 }
