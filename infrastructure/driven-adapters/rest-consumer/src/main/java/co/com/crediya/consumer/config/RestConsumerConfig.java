@@ -21,14 +21,10 @@ public class RestConsumerConfig {
 
     private final int timeout;
 
-    private final String endpoint;
-
     public RestConsumerConfig(@Value("${adapter.restconsumer.url}") String url,
-                              @Value("${adapter.restconsumer.timeout}") int timeout,
-                              @Value("${adapter.restconsumer.endpoint}") String endpoint) {
+                              @Value("${adapter.restconsumer.timeout}") int timeout) {
         this.url = url;
         this.timeout = timeout;
-        this.endpoint = endpoint;
     }
 
     @Bean
