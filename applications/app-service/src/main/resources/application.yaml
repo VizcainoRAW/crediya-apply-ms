@@ -3,23 +3,24 @@ server:
 spring:
   application:
     name: "crediya-apply-ms"
-  devtools:
-    add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: "/h2"
-  profiles:
-    include: null
+
+##DB postgres
+adapters:
+  r2dbc:
+    host: "localhost"
+    port: 5433
+    database: "loan_service"
+    schema: "public"
+    username: "loan_user"
+    password: "loan_pass"
+##
+
+##WebClient
 adapter:
   restconsumer:
     timeout: 5000
-    url: "http://localhost:8081"
-    endpoints:
-      user-exists: "/api/users/{id}/exists"
-      user-exists-by-query: "/api/users/exists/by-id"
-      user-by-id: "/api/users/{id}"
-
+    url: "http://localhost:8080"
+    endpoint: "/api/users/{id}/exists"
 management:
   health:
     circuitbreakers:
@@ -27,22 +28,25 @@ management:
 resilience4j:
   circuitbreaker:
     instances:
-      userExistsById:
+      testGet:
         registerHealthIndicator: true
         failureRateThreshold: 50
         slowCallRateThreshold: 50
-        slowCallDurationThreshold: 2s
+        slowCallDurationThreshold: "2s"
         permittedNumberOfCallsInHalfOpenState: 3
         slidingWindowSize: 10
         minimumNumberOfCalls: 10
-        waitDurationInOpenState: 10s
-      userExistsByIdQuery:
+        waitDurationInOpenState: "10s"
+      testPost:
         registerHealthIndicator: true
         failureRateThreshold: 50
         slowCallRateThreshold: 50
-        slowCallDurationThreshold: 2s
+        slowCallDurationThreshold: "2s"
         permittedNumberOfCallsInHalfOpenState: 3
         slidingWindowSize: 10
         minimumNumberOfCalls: 10
-        waitDurationInOpenState: 10s
+        waitDurationInOpenState: "10s"
+##
 
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
