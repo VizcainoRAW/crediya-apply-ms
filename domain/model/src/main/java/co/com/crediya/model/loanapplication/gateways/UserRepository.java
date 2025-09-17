@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 public interface UserRepository {
     Mono<Boolean> existsById(String userId);
 
-    Mono<UserSnapshot> getUserSnapshot(String token);
+    Mono<UserSnapshot> validateTokenAndGetUser(String token);
 }

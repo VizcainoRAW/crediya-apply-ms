@@ -14,7 +14,7 @@ public record UserSnapshot(
         return "ASESOR".equalsIgnoreCase(role);
     }
     
-    public boolean isCliente() {
+    public boolean isClient() {
         return "CLIENT".equalsIgnoreCase(role);
     }
     
