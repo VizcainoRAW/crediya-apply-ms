@@ -118,7 +118,7 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     }
 
     @Override
-    public Flux<LoanApplication> findAllByUser(String userId) {
+    public Flux<LoanApplication> findAllByUserId(String userId) {
         logger.info("Finding all loan applications for user: {}", userId);
         
         return reactiveRepository.findAllByUserId(userId)

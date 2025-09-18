@@ -28,13 +28,8 @@ public class RestConsumer implements UserRepository{
             .map(UserExistsResponse::getData);
     }
 
-    public Mono<Boolean> fallbackExistsById(String userId, Throwable t) {
-        log.error("Fallback triggered for userId {} due to {}", userId, t.getMessage());
-        return Mono.just(false);
-    }
-
     @Override
-    public Mono<UserSnapshot> getUserSnapshot(String token) {
+    public Mono<UserSnapshot> validateTokenAndGetUser(String token) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getUserSnapshot'");
     }
