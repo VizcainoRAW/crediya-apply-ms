@@ -13,9 +13,9 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(GET("/api/loan-applications"), handler::listLoanApplications)
-                .andRoute(GET("/api/loan-applications/{id}"), handler::getLoanApplication)
-                .andRoute(POST("/api/loan-applications"), handler::createLoanApplication);
+        return route(POST("/api/loan-applications"), handler::createLoanApplication)
+                .andRoute(GET("/api/loan-applications/my"), handler::getMyLoanApplications)
+                .andRoute(GET("/api/loan-applications/pending"), handler::getPendingLoanApplications);
     }
 }
 

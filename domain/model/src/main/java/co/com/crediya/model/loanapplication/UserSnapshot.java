@@ -16,20 +16,24 @@ public record UserSnapshot(
     String documentType,
     String documentId,
     Long tokenExpiresIn
-) {   
+) {
+    public UserSnapshot(String id, String role, Long tokenExpiresIn) {
+        this(id, null, null, null, null, null, null, null, role, null, null, tokenExpiresIn);
+    }
+
     public boolean isAdmin() {
         return "ADMIN".equalsIgnoreCase(role);
     }
     
-    public boolean isAsesor() {
-        return "ASESOR".equalsIgnoreCase(role);
+    public boolean isAdvisor() {
+        return "ADVISOR".equalsIgnoreCase(role);
     }
     
     public boolean isClient() {
-        return "CLIENT".equalsIgnoreCase(role);
+        return "USER".equalsIgnoreCase(role);
     }
     
     public boolean canReviewApplications() {
-        return isAdmin() || isAsesor();
+        return isAdmin() || isAdvisor();
     }
 }

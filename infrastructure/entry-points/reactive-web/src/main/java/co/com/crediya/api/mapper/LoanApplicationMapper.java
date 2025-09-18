@@ -9,12 +9,11 @@ import co.com.crediya.model.loanapplication.LoanApplication;
 @Component
 public class LoanApplicationMapper {
 
-    public LoanApplication toDomain(LoanApplicationRequest dto) {
+    public LoanApplication toDomain(LoanApplicationRequest request) {
         return LoanApplication.builder()
-                .userId(dto.userId())
-                .loanTypeId(dto.loanTypeId())
-                .amount(dto.amount())
-                .termMonths(dto.termMonths())
+                .amount(request.amount())
+                .termMonths(request.termMonths())
+                .loanTypeId(request.loanTypeId())
                 .build();
     }
 
@@ -25,8 +24,9 @@ public class LoanApplicationMapper {
                 domain.getLoanTypeId(),
                 domain.getAmount(),
                 domain.getTermMonths(),
-                domain.getStatus().name(),
-                domain.getCreatedAt()
+                domain.getStatus().getCode(),
+                domain.getCreatedAt(),
+                domain.getUpdatedAt()
         );
     }
 }

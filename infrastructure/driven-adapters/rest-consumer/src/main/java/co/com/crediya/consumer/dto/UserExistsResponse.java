@@ -1,4 +1,4 @@
-package co.com.crediya.consumer;
+package co.com.crediya.consumer.dto;
 
 import lombok.Builder;
 

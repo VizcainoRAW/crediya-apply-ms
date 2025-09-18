@@ -50,3 +50,7 @@ resilience4j:
 
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+jwt:
+  secret: "your-very-long-secret-key-that-should-be-at-least-256-bits-long-for-security-purposes-and-should-be-stored-securely"
+  issuer: "crediya-auth-ms"

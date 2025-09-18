@@ -23,4 +23,5 @@ public class LoanApplication {
     private Integer termMonths;
     private ApplicationStatus status;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

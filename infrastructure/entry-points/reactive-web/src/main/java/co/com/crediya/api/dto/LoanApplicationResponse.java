@@ -11,5 +11,6 @@ public record LoanApplicationResponse(
         BigDecimal amount,
         Integer termMonths,
         String status,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDateTime UpdatedAt
 ) {}
