@@ -2,6 +2,7 @@ package co.com.crediya.model.loanapplication;
 
 public enum ApplicationStatus {
     PENDING_REVIEW("PENDING", "Applicantion pending for a review"),
+    MANUAL_REVIEW("MANUAL","Application pending for a manual review"),
     ACCEPTED("ACCEPTED", "Application accepted"),
     CANCELLED("CANCELLED","Application canceled");
 

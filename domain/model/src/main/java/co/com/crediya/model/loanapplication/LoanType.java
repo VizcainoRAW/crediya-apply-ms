@@ -1,5 +1,6 @@
 package co.com.crediya.model.loanapplication;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class LoanType {
-    private UUID id;;
+    private UUID id;
     private String name;
+    private BigDecimal anualNominalRate;
+    private boolean autoValidation;
 }
