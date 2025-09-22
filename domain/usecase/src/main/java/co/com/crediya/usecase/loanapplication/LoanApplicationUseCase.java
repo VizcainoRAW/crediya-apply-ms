@@ -2,6 +2,7 @@ package co.com.crediya.usecase.loanapplication;
 
 import co.com.crediya.model.loanapplication.ApplicationStatus;
 import co.com.crediya.model.loanapplication.LoanApplication;
+import co.com.crediya.model.loanapplication.LoanType;
 import co.com.crediya.model.loanapplication.UserSnapshot;
 import co.com.crediya.model.loanapplication.gateways.LoanApplicationRepository;
 import co.com.crediya.model.loanapplication.gateways.LoanTypeRepository;
@@ -45,6 +46,10 @@ public class LoanApplicationUseCase {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException(
                     "El tipo de préstamo especificado no existe")))
                 .then();
+    }
+
+    public Flux<LoanType> findAllLoanTypes(){
+        return loanTypeRepository.findAll();
     }
 
     private Mono<Void> validateLoanAmount(BigDecimal amount) {

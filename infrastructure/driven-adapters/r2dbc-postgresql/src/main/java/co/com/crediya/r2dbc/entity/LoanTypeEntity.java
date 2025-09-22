@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -23,4 +24,8 @@ public class LoanTypeEntity {
     private UUID id;
     
     private String name;
+
+    private BigDecimal anualNominalRate;
+
+    private boolean autoValidation;
 }

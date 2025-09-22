@@ -4,7 +4,8 @@ public enum ApplicationStatus {
     PENDING_REVIEW("PENDING", "Applicantion pending for a review"),
     MANUAL_REVIEW("MANUAL","Application pending for a manual review"),
     ACCEPTED("ACCEPTED", "Application accepted"),
-    CANCELLED("CANCELLED","Application canceled");
+    CANCELLED("CANCELLED","Application canceled"),
+    REJECTED("REJECTED", "Application rejected");
 
     private final String code;
     private final String description;
