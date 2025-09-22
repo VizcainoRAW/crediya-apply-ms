@@ -3,6 +3,7 @@ package co.com.crediya.api;
 import co.com.crediya.api.dto.ApiResponse;
 import co.com.crediya.model.loanapplication.UserSnapshot;
 import co.com.crediya.model.loanapplication.gateways.UserRepository;
+import co.com.crediya.model.loanapplication.valuobject.PageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -99,6 +100,19 @@ public class Handler {
                 .doOnError(error -> log.error("Error retrieving pending loan applications: {}",
                         error.getMessage()))
                 .onErrorResume(this::handleError);
+    }
+
+    public Mono<ServerResponse> getPaginatedapplications(ServerRequest request){
+        return extractAndValidateToken(request)
+                .flatMap(userSnapshot -> {
+                    log.info("Retrieving loan application page - User: {}, Role: {}",
+                            userSnapshot.id(), userSnapshot.role());
+
+                    return request.bodyToMono(PageRequest.class)
+                            .flatMap(useCase::execute)
+                            .map(pageResponse -> ApiResponse.success(pageResponse,"Retrining applications page"))
+                            .flatMap(apiResponse -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(apiResponse));
+                });
     }
 
     private Mono<UserSnapshot> extractAndValidateToken(ServerRequest request) {

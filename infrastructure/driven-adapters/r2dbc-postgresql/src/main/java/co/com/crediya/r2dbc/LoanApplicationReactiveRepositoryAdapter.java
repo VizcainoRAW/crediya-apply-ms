@@ -3,14 +3,18 @@ package co.com.crediya.r2dbc;
 import co.com.crediya.model.loanapplication.ApplicationStatus;
 import co.com.crediya.model.loanapplication.LoanApplication;
 import co.com.crediya.model.loanapplication.gateways.LoanApplicationRepository;
+import co.com.crediya.model.loanapplication.valuobject.PageRequest;
+import co.com.crediya.model.loanapplication.valuobject.PageResponse;
 import co.com.crediya.r2dbc.entity.LoanApplicationEntity;
 import co.com.crediya.r2dbc.helper.ReactiveAdapterOperations;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.reactivecommons.utils.ObjectMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,19 +106,38 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     }
 
     @Override
-    public Flux<LoanApplication> findAll() {
-        logger.info("Retrieving all loan applications");
-        
-        return reactiveRepository.findAll()
-                .doOnSubscribe(subscription -> logger.debug("Starting to fetch all loan applications"))
+    public Mono<PageResponse<LoanApplication>> findAll(PageRequest pageRequest) {
+        logger.info("Retrieving paginated loan applications - Page: {}, Size: {}, Sort: {} {}",
+                pageRequest.page(), pageRequest.size(), pageRequest.sortBy(), pageRequest.sortDirection());
+
+        int offset = pageRequest.page() * pageRequest.size();
+        Sort sort = createSort(pageRequest.sortBy(), pageRequest.sortDirection());
+
+        Mono<List<LoanApplication>> contentMono = reactiveRepository
+                .findAllWithPagination(offset, pageRequest.size(), sort)
+                .doOnNext(entity -> logger.trace("Retrieved loan application entity: {}", entity.getId()))
                 .map(this::toDomain)
-                .doOnNext(app -> logger.trace("Converted loan application entity to domain: {}", app.getId()))
-                .doOnComplete(() -> logger.info("Successfully retrieved all loan applications"))
-                .doOnError(error -> logger.error("Error retrieving all loan applications. Error: {}", 
-                                                error.getMessage(), error))
                 .collectList()
-                .doOnNext(list -> logger.info("Total loan applications retrieved: {}", list.size()))
-                .flatMapMany(Flux::fromIterable);
+                .doOnNext(list -> logger.debug("Retrieved {} loan applications for page {}",
+                        list.size(), pageRequest.page()));
+
+        Mono<Long> totalElementsMono = reactiveRepository.count()
+                .doOnNext(total -> logger.debug("Total loan applications count: {}", total));
+
+        return Mono.zip(contentMono, totalElementsMono)
+                .map(tuple -> {
+                    List<LoanApplication> content = tuple.getT1();
+                    int totalElements = tuple.getT2().intValue();
+
+                    return new PageResponse<LoanApplication>(
+                            content,
+                            totalElements,
+                            pageRequest.page(),
+                            pageRequest.size()
+                            );
+                })
+                .doOnError(error -> logger.error("Error retrieving paginated loan applications. Error: {}",
+                        error.getMessage(), error));
     }
 
     @Override
@@ -147,6 +170,36 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
                 .collectList()
                 .doOnNext(list -> logger.info("Total loan applications found with status {}: {}", status, list.size()))
                 .flatMapMany(Flux::fromIterable);
+    }
+
+    private Sort createSort(String sortBy, String sortDirection) {
+        Sort.Direction direction = "DESC".equalsIgnoreCase(sortDirection)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        String validSortBy = validateSortField(sortBy);
+
+        logger.debug("Created sort: {} {}", validSortBy, direction);
+        return Sort.by(direction, validSortBy);
+    }
+
+    private String validateSortField(String sortBy) {
+        return switch (sortBy) {
+            case "id", "userId", "amount", "termMonths", "status", "createdAt", "loanTypeId" -> sortBy;
+            default -> {
+                logger.warn("Invalid sort field '{}', using default 'createdAt'", sortBy);
+                yield "createdAt";
+            }
+        };
+    }
+
+    private int calculateTotalPages(long totalElements, int size) {
+        return (int) Math.ceil((double) totalElements / size);
+    }
+
+    private boolean isLastPage(int currentPage, long totalElements, int size) {
+        int totalPages = calculateTotalPages(totalElements, size);
+        return currentPage >= totalPages - 1;
     }
 
     protected LoanApplicationEntity toData(LoanApplication domain) {

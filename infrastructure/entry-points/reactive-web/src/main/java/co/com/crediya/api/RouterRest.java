@@ -14,6 +14,7 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/loan-applications"), handler::createLoanApplication)
+                .andRoute(GET("/api/loan-applications"), handler::getPaginatedapplications)
                 .andRoute(GET("/api/loan-applications/my"), handler::getMyLoanApplications)
                 .andRoute(GET("/api/loan-applications/pending"), handler::getPendingLoanApplications);
     }

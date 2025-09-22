@@ -6,6 +6,8 @@ import co.com.crediya.model.loanapplication.LoanType;
 import co.com.crediya.model.loanapplication.UserSnapshot;
 import co.com.crediya.model.loanapplication.gateways.LoanApplicationRepository;
 import co.com.crediya.model.loanapplication.gateways.LoanTypeRepository;
+import co.com.crediya.model.loanapplication.valuobject.PageRequest;
+import co.com.crediya.model.loanapplication.valuobject.PageResponse;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -50,6 +52,27 @@ public class LoanApplicationUseCase {
 
     public Flux<LoanType> findAllLoanTypes(){
         return loanTypeRepository.findAll();
+    }
+
+    public Mono<PageResponse<LoanApplication>> execute(PageRequest pageRequest) {
+        return validatePageRequest(pageRequest)
+                .then(loanApplicationRepository.findAll(pageRequest));
+    }
+
+    private Mono<Void> validatePageRequest(PageRequest pageRequest) {
+        if (pageRequest == null) {
+            return Mono.error(new IllegalArgumentException("PageRequest cannot be null"));
+        }
+
+        if (pageRequest.page() < 0) {
+            return Mono.error(new IllegalArgumentException("Page number cannot be negative"));
+        }
+
+        if (pageRequest.size() <= 0 || pageRequest.size() > 100) {
+            return Mono.error(new IllegalArgumentException("Page size must be between 1 and 100"));
+        }
+
+        return Mono.empty();
     }
 
     private Mono<Void> validateLoanAmount(BigDecimal amount) {
